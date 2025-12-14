@@ -1,6 +1,7 @@
-import 'package:expenses/core/models/expense.dart';
-import 'package:expenses/core/providers/user_notifier.dart';
-import 'package:expenses/core/widgets/my_transaction.dart';
+import 'package:expenses/core/constants.dart';
+import 'package:expenses/core/utils/shared_preferences_singleton.dart';
+import 'package:expenses/features/home/models/expense.dart';
+import 'package:expenses/features/home/presentation/view/widget/my_transaction.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,15 +18,14 @@ class MyTransactionListView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final singInUser = ref
-        .watch(userNotifierNotifierProvider.notifier)
-        .singInUser;
+    final isAdmin = Prefs.getBool(kIsAdmin);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: ListView.builder(
         itemCount: expenses.length,
         itemBuilder: (context, index) {
-          if (singInUser != null && singInUser.isAdmin) {
+          if (isAdmin) {
             return Dismissible(
               key: ValueKey(expenses[index].id),
               background: Container(

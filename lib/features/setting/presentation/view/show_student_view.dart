@@ -1,4 +1,4 @@
-import 'package:expenses/core/models/user.dart';
+import 'package:expenses/features/home/models/user.dart';
 import 'package:expenses/core/providers/show_students_notifier.dart';
 import 'package:expenses/core/widgets/drop_down_menu_list.dart';
 import 'package:expenses/features/setting/presentation/view/widget/show_student_expense_view.dart';

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:expenses/core/models/user.dart';
-import 'package:expenses/core/providers/user_notifier.dart';
+import 'package:expenses/features/home/models/user.dart';
+import 'package:expenses/core/providers/users_notifier.dart';
 import 'package:expenses/features/setting/presentation/view/widget/show_user_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,7 +19,7 @@ class ShowUser extends ConsumerWidget {
       body: SafeArea(
         child: StreamBuilder<QuerySnapshot>(
           stream: ref
-              .read(userNotifierNotifierProvider.notifier)
+              .read(usersNotifierNotifierProvider.notifier)
               .getUsersSnapshot(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {

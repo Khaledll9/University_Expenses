@@ -1,12 +1,13 @@
-import 'package:expenses/core/models/expense.dart';
-import 'package:expenses/core/providers/expense_notifier.dart';
-import 'package:expenses/core/providers/sing_in_student_notifier.dart';
-import 'package:expenses/core/providers/user_notifier.dart';
-import 'package:expenses/core/widgets/money_card.dart';
-import 'package:expenses/core/widgets/my_transaction_list_view.dart';
+import 'package:expenses/features/home/models/expense.dart';
+import 'package:expenses/features/home/view_model/expense_notifier.dart';
+import 'package:expenses/features/home/presentation/view/widget/money_card.dart';
+import 'package:expenses/features/home/presentation/view/widget/my_transaction_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';
+
+import '../../../../../core/constants.dart';
+import '../../../../../core/utils/shared_preferences_singleton.dart';
 
 class TotalBalanceView extends ConsumerWidget {
   const TotalBalanceView({super.key, required this.expenses});
@@ -15,9 +16,8 @@ class TotalBalanceView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final singInUser = ref
-        .watch(userNotifierNotifierProvider.notifier)
-        .singInUser;
+    final isAdmin = Prefs.getBool(kIsAdmin);
+
     int getIncome(List<Expense> expenses) {
       int totalIncome = 0;
       for (var expense in expenses) {
@@ -39,7 +39,7 @@ class TotalBalanceView extends ConsumerWidget {
     }
 
     List<Expense> getTotalExpense(List<Expense> expenses) {
-      final singInStudent = ref.watch(singInStudentNotifierProvider);
+      final singInStudent = Prefs.getName(kUserName);
 
       List<Expense> filteredExpenses = expenses
           .where(
@@ -73,7 +73,7 @@ class TotalBalanceView extends ConsumerWidget {
           ),
           action: SnackBarAction(
             textColor: Theme.of(context).colorScheme.primaryContainer,
-            label: 'إرحاع',
+            label: 'إرجاع',
             onPressed: () {
               ref.read(expenseNotifierProvider.notifier).addExpense(expense);
             },
@@ -94,16 +94,15 @@ class TotalBalanceView extends ConsumerWidget {
       ),
     );
 
-    if (singInStudentExpenses.isNotEmpty) {
+    if (singInStudentExpenses.isNotEmpty || isAdmin) {
       mainContent = Expanded(
         child: MyTransactionListView(
-          expenses: singInUser != null && singInUser.isAdmin
-              ? expenses
-              : singInStudentExpenses,
+          expenses: isAdmin ? expenses : singInStudentExpenses,
           onRemoveExpense: removeExpense,
         ),
       );
     }
+
     return Column(
       children: [
         MoneyCard(

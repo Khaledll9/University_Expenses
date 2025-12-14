@@ -1,12 +1,14 @@
 import 'package:expenses/features/add_expense/presentation/view/add_expense_view.dart';
 import 'package:expenses/features/home/presentation/view/home_view.dart';
-import 'package:expenses/features/my_payment/presentation/view/my_payment_view.dart';
+import 'package:expenses/features/home/presentation/view/my_payment_view.dart';
 import 'package:expenses/features/setting/presentation/view/setting_view.dart';
 import 'package:expenses/features/setting/presentation/view/show_student_view.dart';
 import 'package:expenses/features/setting/presentation/view/widget/show_student_expense_view.dart';
 import 'package:expenses/features/setting/presentation/view/widget/show_user.dart';
 import 'package:expenses/features/sing_in/presentation/view/sing_in_view.dart';
 import 'package:flutter/material.dart';
+
+import '../../features/sing_in/presentation/view/widget/waiting_accept_view.dart';
 
 Route<dynamic> onGenerateRoute(RouteSettings setting) {
   switch (setting.name) {
@@ -28,6 +30,10 @@ Route<dynamic> onGenerateRoute(RouteSettings setting) {
       return MaterialPageRoute(builder: (context) => const ShowStudentView());
     case ShowUser.routeName:
       return MaterialPageRoute(builder: (context) => const ShowUser());
+    case WaitingAcceptView.routeName:
+      return MaterialPageRoute(
+        builder: (context) => const WaitingAcceptView(id: ''),
+      );
     case ShowStudentExpenseView.routeName:
       return MaterialPageRoute(
         builder: (context) => const ShowStudentExpenseView(),

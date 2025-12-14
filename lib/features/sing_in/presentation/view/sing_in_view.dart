@@ -1,14 +1,18 @@
-import 'package:expenses/core/models/expense.dart';
-import 'package:expenses/core/models/user.dart';
-import 'package:expenses/core/providers/sing_in_student_notifier.dart';
-import 'package:expenses/core/providers/user_notifier.dart';
+import 'dart:developer';
+
+import 'package:expenses/core/constants.dart';
+import 'package:expenses/core/utils/shared_preferences_singleton.dart';
+import 'package:expenses/features/home/models/expense.dart';
+import 'package:expenses/features/home/models/user.dart';
+import 'package:expenses/core/providers/users_notifier.dart';
 import 'package:expenses/core/widgets/drop_down_menu_list.dart';
-import 'package:expenses/features/home/presentation/view/home_view.dart';
 import 'package:expenses/features/sing_in/presentation/view/widget/custom_buttom.dart';
 import 'package:expenses/features/sing_in/presentation/view/widget/custom_text_field.dart';
 import 'package:expenses/features/sing_in/presentation/view/widget/custom_toggle_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/providers/sing_in_student_notifier.dart';
+import 'widget/waiting_accept_view.dart';
 
 class SingInView extends ConsumerWidget {
   const SingInView({super.key});
@@ -20,6 +24,7 @@ class SingInView extends ConsumerWidget {
     bool isAdmin = false;
     bool isAccepted = false;
     final amountController = TextEditingController();
+
     String studentName = ref.watch(singInStudentNotifierProvider);
 
     void submitExpenseData(WidgetRef ref) {
@@ -51,6 +56,7 @@ class SingInView extends ConsumerWidget {
         );
         return;
       }
+
       final id = uuid.v4().substring(0, 8);
       final user = User(
         id: id,
@@ -59,13 +65,15 @@ class SingInView extends ConsumerWidget {
         number: amountController.text,
         isAccepted: isAccepted,
       );
-      ref.read(userNotifierNotifierProvider.notifier).addUser(user);
-      ref.read(userNotifierNotifierProvider.notifier).getSingleUser(id);
-      Navigator.pushNamed(context, HomeView.routeName);
 
-      // Navigator.of(
-      //   context,
-      // ).push(MaterialPageRoute(builder: (context) => WaitingAcceptView()));
+      Prefs.setBool(kIsAdmin, isAdmin);
+      Prefs.setBool(kIsSingInPressed, true);
+      ref.read(usersNotifierNotifierProvider.notifier).addUser(user);
+      // ref.read(usersNotifierNotifierProvider.notifier).setSingleUser(user);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => WaitingAcceptView(id: id)),
+      );
     }
 
     return Scaffold(
@@ -85,6 +93,8 @@ class SingInView extends ConsumerWidget {
                       return;
                     }
                     studentName = value;
+
+                    Prefs.setName(kUserName, value);
                     ref
                         .read(singInStudentNotifierProvider.notifier)
                         .changeStudent(value);
@@ -96,6 +106,7 @@ class SingInView extends ConsumerWidget {
                   secondName: "مسؤول",
                   onChanged: () {
                     isAdmin = !isAdmin;
+                    log(isAdmin.toString());
                   },
                 ),
                 const SizedBox(height: 25),

@@ -1,10 +1,12 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:expenses/core/repositories/user_repositories.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../models/user.dart';
+import 'package:expenses/features/home/repositories/user_repositories.dart';
 
-class UserNotifierNotifier extends Notifier<List<User>> {
+import '../../features/home/models/user.dart';
+
+class UsersNotifierNotifier extends Notifier<List<User>> {
   final _userRepositories = UserRepositories();
   User? singInUser;
 
@@ -18,7 +20,7 @@ class UserNotifierNotifier extends Notifier<List<User>> {
     return state;
   }
 
-  Future<void> getSingleUser(String userId) async {
+  Future<void> setSingleUser(String userId) async {
     singInUser = await _userRepositories.getSingleUser(userId);
   }
 
@@ -40,7 +42,7 @@ class UserNotifierNotifier extends Notifier<List<User>> {
   }
 }
 
-final userNotifierNotifierProvider =
-    NotifierProvider<UserNotifierNotifier, List<User>>(
-      () => UserNotifierNotifier(),
+final usersNotifierNotifierProvider =
+    NotifierProvider<UsersNotifierNotifier, List<User>>(
+      () => UsersNotifierNotifier(),
     );

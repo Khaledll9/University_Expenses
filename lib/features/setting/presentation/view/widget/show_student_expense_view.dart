@@ -1,8 +1,8 @@
-import 'package:expenses/core/models/expense.dart';
-import 'package:expenses/core/providers/expense_notifier.dart';
+import 'package:expenses/features/home/models/expense.dart';
+import 'package:expenses/features/home/view_model/expense_notifier.dart';
 import 'package:expenses/core/providers/show_students_notifier.dart';
-import 'package:expenses/core/widgets/money_card.dart';
-import 'package:expenses/core/widgets/my_transaction_list_view.dart';
+import 'package:expenses/features/home/presentation/view/widget/money_card.dart';
+import 'package:expenses/features/home/presentation/view/widget/my_transaction_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -36,7 +36,7 @@ class ShowStudentExpenseView extends ConsumerWidget {
           ),
           action: SnackBarAction(
             textColor: Theme.of(context).colorScheme.primaryContainer,
-            label: 'إرحاع',
+            label: 'إرجاع',
             onPressed: () {
               ref.read(expenseNotifierProvider.notifier).addExpense(expense);
             },
@@ -92,40 +92,6 @@ class ShowStudentExpenseView extends ConsumerWidget {
                 ),
               );
             }
-            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              Column(
-                children: [
-                  const SizedBox(height: 30),
-                  MoneyCard(
-                    balance: formatterNumber.format(50000),
-                    expense: formatterNumber.format(50000),
-                    income: formatterNumber.format(0),
-                    expenseName: 'كم باقي',
-                    incomeName: 'كم دفعت',
-                    incomeIcon: HugeIcon(
-                      icon: HugeIcons.strokeRoundedMoneyReceiveFlow02,
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    ),
-                    expenseIcon: HugeIcon(
-                      icon: HugeIcons.strokeRoundedMoneySendFlow02,
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
-                    ),
-                    cardName: showStudent,
-                  ),
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        "لا يوجد ايداعات بعد...",
-                        style: TextStyle(
-                          fontSize: 24,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            }
             final expenses = snapshot.data!;
             final studentExpenses = getExpensesOfStudent(expenses);
             studentPay = getTotalAmountOfStudent(studentExpenses);
@@ -149,12 +115,24 @@ class ShowStudentExpenseView extends ConsumerWidget {
                   ),
                   cardName: showStudent,
                 ),
-                Expanded(
-                  child: MyTransactionListView(
-                    expenses: studentExpenses,
-                    onRemoveExpense: removeExpense,
-                  ),
-                ),
+                studentExpenses.isEmpty
+                    ? Expanded(
+                        child: Center(
+                          child: Text(
+                            "لا يوجد ايداعات بعد...",
+                            style: TextStyle(
+                              fontSize: 24,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                      )
+                    : Expanded(
+                        child: MyTransactionListView(
+                          expenses: studentExpenses,
+                          onRemoveExpense: removeExpense,
+                        ),
+                      ),
               ],
             );
           },

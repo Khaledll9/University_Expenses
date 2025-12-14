@@ -1,8 +1,9 @@
-import 'package:expenses/core/models/expense.dart';
-import 'package:expenses/core/providers/expense_notifier.dart';
-import 'package:expenses/core/providers/sing_in_student_notifier.dart';
-import 'package:expenses/core/widgets/money_card.dart';
-import 'package:expenses/core/widgets/my_transaction_list_view.dart';
+import 'package:expenses/core/constants.dart';
+import 'package:expenses/core/utils/shared_preferences_singleton.dart';
+import 'package:expenses/features/home/models/expense.dart';
+import 'package:expenses/features/home/view_model/expense_notifier.dart';
+import 'package:expenses/features/home/presentation/view/widget/money_card.dart';
+import 'package:expenses/features/home/presentation/view/widget/my_transaction_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -14,7 +15,7 @@ class MyPaymentView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final singInStudent = ref.watch(singInStudentNotifierProvider);
+    final singInStudent = Prefs.getName(kUserName);
     void removeExpense(Expense expense) {
       ref.read(expenseNotifierProvider.notifier).deleteExpense(expense.id);
       ScaffoldMessenger.of(context).clearSnackBars();
@@ -32,7 +33,7 @@ class MyPaymentView extends ConsumerWidget {
           ),
           action: SnackBarAction(
             textColor: Theme.of(context).colorScheme.primaryContainer,
-            label: 'إرحاع',
+            label: 'إرجاع',
             onPressed: () {
               ref.read(expenseNotifierProvider.notifier).addExpense(expense);
             },

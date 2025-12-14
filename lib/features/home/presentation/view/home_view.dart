@@ -1,14 +1,12 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:expenses/core/models/expense.dart';
-import 'package:expenses/core/providers/expense_notifier.dart';
-import 'package:expenses/core/providers/navigator_bar_notifier.dart';
+import 'package:expenses/features/home/models/expense.dart';
+import 'package:expenses/features/home/view_model/expense_notifier.dart';
+import 'package:expenses/features/home/view_model/navigator_bar_notifier.dart';
 import 'package:expenses/features/home/presentation/view/widget/total_balance_view.dart';
-import 'package:expenses/features/my_payment/presentation/view/my_payment_view.dart';
+import 'package:expenses/features/home/presentation/view/my_payment_view.dart';
 import 'package:expenses/features/setting/presentation/view/setting_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-// final _fireStore = FirebaseFirestore.instance.collection('expenses');
 
 class HomeView extends ConsumerWidget {
   const HomeView({super.key});

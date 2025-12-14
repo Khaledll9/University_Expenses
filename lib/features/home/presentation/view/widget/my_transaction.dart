@@ -1,4 +1,4 @@
-import 'package:expenses/core/models/expense.dart';
+import 'package:expenses/features/home/models/expense.dart';
 import 'package:flutter/material.dart';
 
 class MyTransaction extends StatelessWidget {

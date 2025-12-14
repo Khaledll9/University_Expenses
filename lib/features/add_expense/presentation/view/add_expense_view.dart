@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:expenses/core/models/expense.dart';
-import 'package:expenses/core/providers/expense_notifier.dart';
+import 'package:expenses/features/home/models/expense.dart';
+import 'package:expenses/features/home/view_model/expense_notifier.dart';
 import 'package:expenses/core/widgets/drop_down_menu_list.dart';
 import 'package:expenses/features/add_expense/presentation/view/widget/add_text_filed.dart';
 import 'package:expenses/features/sing_in/presentation/view/widget/custom_text_field.dart';
@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';
 
-import '../../../../core/models/user.dart';
+import '../../../home/models/user.dart';
 
 class AddExpenseView extends StatefulWidget {
   const AddExpenseView({super.key});

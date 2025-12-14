@@ -58,6 +58,7 @@ class ToggleDarkLight extends ConsumerWidget {
       selectedIconScale: 1,
       onChanged: (value) {
         firstSwitchValue = value;
+
         ref.read(changeThemeNotifierProvider.notifier).toggleTheme();
       },
     );

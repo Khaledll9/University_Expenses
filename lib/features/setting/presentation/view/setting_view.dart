@@ -1,6 +1,5 @@
-import 'package:expenses/core/models/expense.dart';
-import 'package:expenses/core/providers/user_notifier.dart';
-import 'package:expenses/core/widgets/money_card.dart';
+import 'package:expenses/features/home/models/expense.dart';
+import 'package:expenses/features/home/presentation/view/widget/money_card.dart';
 import 'package:expenses/features/add_expense/presentation/view/add_expense_view.dart';
 import 'package:expenses/features/setting/presentation/view/show_student_view.dart';
 import 'package:expenses/features/setting/presentation/view/widget/custom_inkwell_button.dart';
@@ -10,6 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';
 
+import '../../../../core/constants.dart';
+import '../../../../core/utils/shared_preferences_singleton.dart';
+
 class SettingView extends ConsumerWidget {
   const SettingView({required this.expenses, super.key});
 
@@ -17,10 +19,6 @@ class SettingView extends ConsumerWidget {
   final List<Expense> expenses;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final singInUser = ref
-        .watch(userNotifierNotifierProvider.notifier)
-        .singInUser;
-
     int getSponsor(List<Expense> expenses) {
       int totalSponsor = 0;
       for (var expense in expenses) {
@@ -74,7 +72,7 @@ class SettingView extends ConsumerWidget {
             secondName: 'الوضع الداكن',
           ),
 
-          if (singInUser != null && singInUser.isAdmin)
+          if (Prefs.getBool(kIsAdmin))
             Column(
               children: [
                 const SizedBox(height: 30),

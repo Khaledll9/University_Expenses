@@ -1,5 +1,5 @@
-import 'package:expenses/core/models/user.dart';
-import 'package:expenses/core/providers/user_notifier.dart';
+import 'package:expenses/features/home/models/user.dart';
+import 'package:expenses/core/providers/users_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -51,8 +51,9 @@ class ShowUserDetails extends ConsumerWidget {
             confirmDismiss: (direction) async {
               if (direction == DismissDirection.startToEnd) {
                 ref
-                    .read(userNotifierNotifierProvider.notifier)
+                    .read(usersNotifierNotifierProvider.notifier)
                     .updateUser(users[index]);
+
                 ScaffoldMessenger.of(context).clearSnackBars();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -100,7 +101,7 @@ class ShowUserDetails extends ConsumerWidget {
                   ),
                 );
                 ref
-                    .read(userNotifierNotifierProvider.notifier)
+                    .read(usersNotifierNotifierProvider.notifier)
                     .deleteUser(users[index].id);
                 return true;
               }

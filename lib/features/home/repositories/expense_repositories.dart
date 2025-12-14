@@ -1,18 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:expenses/core/models/expense.dart';
+import 'package:expenses/features/home/models/expense.dart';
 
 class ExpenseRepositories {
   final _fireStore = FirebaseFirestore.instance;
   static const _expenseCollectionPath = 'expenses';
 
   Stream<List<Expense>> getExpensesStream() {
-    return _fireStore.collection(_expenseCollectionPath).snapshots().map((
-      snapshot,
-    ) {
-      return snapshot.docs
-          .map((doc) => Expense.formFirebase(doc.data()))
-          .toList();
-    });
+    return _fireStore
+        .collection(_expenseCollectionPath)
+        .orderBy('date', descending: true)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map((doc) => Expense.formFirebase(doc.data()))
+              .toList();
+        });
   }
   // Future<List<Expense>> getExpenses() async {
   // late List<Expense> tempList = [];

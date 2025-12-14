@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../models/user.dart';
+import '../../features/home/models/user.dart';
 
 class ShowStudentsNotifier extends Notifier<String> {
   @override
