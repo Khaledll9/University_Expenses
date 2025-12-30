@@ -2,7 +2,7 @@ import 'package:expenses/features/home/models/user.dart';
 import 'package:expenses/core/providers/show_students_notifier.dart';
 import 'package:expenses/core/widgets/drop_down_menu_list.dart';
 import 'package:expenses/features/setting/presentation/view/widget/show_student_expense_view.dart';
-import 'package:expenses/features/sing_in/presentation/view/widget/custom_buttom.dart';
+import 'package:expenses/features/sign_in/view/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

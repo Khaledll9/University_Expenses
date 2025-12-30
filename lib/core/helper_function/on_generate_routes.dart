@@ -5,10 +5,9 @@ import 'package:expenses/features/setting/presentation/view/setting_view.dart';
 import 'package:expenses/features/setting/presentation/view/show_student_view.dart';
 import 'package:expenses/features/setting/presentation/view/widget/show_student_expense_view.dart';
 import 'package:expenses/features/setting/presentation/view/widget/show_user.dart';
-import 'package:expenses/features/sing_in/presentation/view/sing_in_view.dart';
+import 'package:expenses/features/sign_in/view/sign_in_view.dart';
+import 'package:expenses/features/sign_in/view/widgets/waiting_accept_view.dart';
 import 'package:flutter/material.dart';
-
-import '../../features/sing_in/presentation/view/widget/waiting_accept_view.dart';
 
 Route<dynamic> onGenerateRoute(RouteSettings setting) {
   switch (setting.name) {
@@ -22,8 +21,8 @@ Route<dynamic> onGenerateRoute(RouteSettings setting) {
       return MaterialPageRoute(
         builder: (context) => const SettingView(expenses: []),
       );
-    case SingInView.routeName:
-      return MaterialPageRoute(builder: (context) => const SingInView());
+    case SignInView.routeName:
+      return MaterialPageRoute(builder: (context) => const SignInView());
     case AddExpenseView.routeName:
       return MaterialPageRoute(builder: (context) => const AddExpenseView());
     case ShowStudentView.routeName:

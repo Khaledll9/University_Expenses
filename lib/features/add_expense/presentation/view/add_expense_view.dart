@@ -1,113 +1,95 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:expenses/features/home/models/expense.dart';
-import 'package:expenses/features/home/view_model/expense_notifier.dart';
 import 'package:expenses/core/widgets/drop_down_menu_list.dart';
-import 'package:expenses/features/add_expense/presentation/view/widget/add_text_filed.dart';
-import 'package:expenses/features/sing_in/presentation/view/widget/custom_text_field.dart';
-import 'package:expenses/features/sing_in/presentation/view/widget/custom_toggle_button.dart';
+import 'package:expenses/features/add_expense/presentation/view/widget/add_text_filed.dart'; // Naming convention: keeping original file name
+import 'package:expenses/features/add_expense/view_model/add_expense_view_model.dart';
+import 'package:expenses/features/home/models/expense.dart'; // For formatter
+import 'package:expenses/features/home/models/user.dart';
+import 'package:expenses/features/sign_in/view/widgets/custom_text_field.dart';
+import 'package:expenses/features/sign_in/view/widgets/custom_toggle_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hugeicons/hugeicons.dart';
 
-import '../../../home/models/user.dart';
-
-class AddExpenseView extends StatefulWidget {
+class AddExpenseView extends ConsumerStatefulWidget {
   const AddExpenseView({super.key});
 
   static const routeName = 'AddExpenseView';
 
   @override
-  State<AddExpenseView> createState() {
-    return _AddExpenseViewState();
-  }
+  ConsumerState<AddExpenseView> createState() => _AddExpenseViewState();
 }
 
-class _AddExpenseViewState extends State<AddExpenseView> {
-  CollectionReference collRef = FirebaseFirestore.instance.collection(
-    'expenses',
-  );
-
+class _AddExpenseViewState extends ConsumerState<AddExpenseView> {
   final _titleController = TextEditingController();
   final _noteController = TextEditingController();
   final _amountController = TextEditingController();
-  bool isExpense = false;
-  DateTime _selectedDate = DateTime.now();
-  String studentName = Students.first;
-  bool isStudent = true;
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _noteController.dispose();
+    _amountController.dispose();
+    super.dispose();
+  }
 
   void _presentDatePicker() async {
     final now = DateTime.now();
     final firstDate = DateTime(now.year - 1, now.month, now.day);
     final pickedDate = await showDatePicker(
       context: context,
-      initialDate: now,
+      initialDate: ref.read(addExpenseViewModelProvider).selectedDate,
       firstDate: firstDate,
       lastDate: now,
     );
 
-    if (pickedDate == null) {
-      return;
+    if (pickedDate != null) {
+      ref.read(addExpenseViewModelProvider.notifier).updateDate(pickedDate);
     }
-    setState(() {
-      _selectedDate = pickedDate;
-    });
   }
 
-  void _submitExpenseData(WidgetRef ref) {
-    final enteredAmount = int.tryParse(
-      _amountController.text,
-    ); // tryParse('Hello') => null, tryParse('1.12') => 1.12
-    final title = _titleController.text.trim().isEmpty
-        ? studentName
-        : _titleController.text;
-    final amountIsInvalid = enteredAmount == null || enteredAmount <= 0;
-    if (amountIsInvalid) {
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('خطا'),
-          content: const Text('ادخل المبلغ'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(ctx);
-              },
-              child: Text(
-                'حسنا',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                ),
+  void _submitData() {
+    final success = ref
+        .read(addExpenseViewModelProvider.notifier)
+        .submitExpense(
+          titleInput: _titleController.text,
+          amountInput: _amountController.text,
+          noteInput: _noteController.text,
+        );
+
+    if (!success) {
+      _showErrorDialog();
+    } else {
+      Navigator.pop(context);
+    }
+  }
+
+  void _showErrorDialog() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('خطا'), // Consider localizing
+        content: const Text('ادخل المبلغ'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+            },
+            child: Text(
+              'حسنا',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
               ),
             ),
-          ],
-        ),
-      );
-      return;
-    }
-    final expense = Expense(
-      isStudent: isStudent,
-      isExpense: isExpense,
-      title: title,
-      id: uuid.v4().substring(0, 8),
-      note: _noteController.text,
-      amount: _amountController.text,
-      date: _selectedDate.toString().substring(0, 10),
+          ),
+        ],
+      ),
     );
-    ref.read(expenseNotifierProvider.notifier).addExpense(expense);
-
-    Navigator.pop(context);
-  }
-
-  @override
-  void dispose() {
-    _noteController.dispose();
-    _titleController.dispose();
-    _amountController.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(addExpenseViewModelProvider);
+    final viewModel = ref.read(addExpenseViewModelProvider.notifier);
+
     return Scaffold(
       appBar: AppBar(title: const Text('إضافة او سحب')),
       body: SafeArea(
@@ -121,32 +103,22 @@ class _AddExpenseViewState extends State<AddExpenseView> {
                   CustomToggleButton(
                     firstName: "طالب",
                     secondName: "داعم",
-                    onChanged: () {
-                      setState(() {
-                        isStudent = !isStudent;
-                      });
-                    },
+                    currentValue: state.isStudent,
+                    onChanged: viewModel.toggleUserType,
                   ),
-                  if (isStudent)
+                  if (state.isStudent)
                     Column(
                       children: [
                         const SizedBox(height: 30),
                         DropDownMenuList(
                           studentList: Students,
-                          studentName: studentName,
-                          onChange: (value) {
-                            if (value == null) {
-                              return;
-                            }
-                            setState(() {
-                              studentName = value;
-                            });
-                          },
+                          studentName: state.studentName,
+                          onChange: viewModel.updateStudentName,
                         ),
                         const SizedBox(height: 25),
                       ],
                     ),
-                  if (!isStudent)
+                  if (!state.isStudent)
                     Column(
                       children: [
                         const SizedBox(height: 25),
@@ -174,7 +146,7 @@ class _AddExpenseViewState extends State<AddExpenseView> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(formatter.format(_selectedDate)),
+                            Text(formatter.format(state.selectedDate)),
                             IconButton(
                               onPressed: _presentDatePicker,
                               icon: HugeIcon(
@@ -201,22 +173,16 @@ class _AddExpenseViewState extends State<AddExpenseView> {
                             Radius.circular(8),
                           ),
                         ),
-                        child: Consumer(
-                          builder: (context, ref, child) {
-                            return TextButton(
-                              onPressed: () {
-                                _submitExpenseData(ref);
-                              },
-                              child: Text(
-                                'حفظ',
-                                style: TextStyle(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.inversePrimary,
-                                ),
-                              ),
-                            );
-                          },
+                        child: TextButton(
+                          onPressed: _submitData,
+                          child: Text(
+                            'حفظ',
+                            style: TextStyle(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.inversePrimary,
+                            ),
+                          ),
                         ),
                       ),
                       TextButton(
@@ -238,9 +204,8 @@ class _AddExpenseViewState extends State<AddExpenseView> {
                   CustomToggleButton(
                     firstName: 'إضافة',
                     secondName: 'سحب',
-                    onChanged: () {
-                      isExpense = !isExpense;
-                    },
+                    currentValue: !state.isExpense,
+                    onChanged: viewModel.toggleExpenseType,
                   ),
                   const SizedBox(height: 50),
                   AddTextFiled(
